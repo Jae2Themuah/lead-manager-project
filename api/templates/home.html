@@ -1,0 +1,209 @@
+<!-- templates/home.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Manager Home Page</title>
+    <style>
+        /* Basic styling for the page */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        nav {
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 18px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .main-content {
+            padding: 20px;
+            background-color: #fff;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .feature {
+            background-color: #fafafa;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+        }
+
+        footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .lead-section,
+        .purchase-leads {
+            margin-top: 40px;
+        }
+
+        .lead-list,
+        .lead-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .lead-item,
+        .purchase-item {
+            background-color: #fafafa;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Welcome to the Lead Manager Application!</h1>
+        <p>Your go-to platform for managing and purchasing leads efficiently.</p>
+    </header>
+
+    <nav>
+        <a href="/login">Login</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/contact">Contact Us</a>
+    </nav>
+
+    <div class="main-content">
+        <section>
+            <h2>About the Lead Manager Application</h2>
+            <p>The Lead Manager Application is designed to help businesses and sales teams efficiently track, manage, and follow up on leads. You can also purchase new leads to grow your pipeline faster.</p>
+        </section>
+
+        <section>
+            <h2>Key Features</h2>
+            <div class="features">
+                <div class="feature">
+                    <h3>Lead Tracking</h3>
+                    <p>Easily track leads from initial contact to conversion. Stay on top of your sales pipeline with detailed reporting.</p>
+                </div>
+                <div class="feature">
+                    <h3>Appointment Scheduling</h3>
+                    <p>Automatically schedule appointments with prospects and clients, and get reminders to follow up.</p>
+                </div>
+                <div class="feature">
+                    <h3>Lead Analytics</h3>
+                    <p>Get detailed insights on your lead generation campaigns and performance, helping you make data-driven decisions.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="lead-section">
+            <h2>Your Current Leads</h2>
+            <p>Manage and track the status of your existing leads below:</p>
+            <div class="lead-list">
+                <!-- Example lead items, you can dynamically populate this list -->
+                <div class="lead-item">
+                    <h4>Lead Name 1</h4>
+                    <p>Status: Pending</p>
+                    <button class="button">View Details</button>
+                    <button class="button">Mark as Converted</button>
+                </div>
+                <div class="lead-item">
+                    <h4>Lead Name 2</h4>
+                    <p>Status: Contacted</p>
+                    <button class="button">View Details</button>
+                    <button class="button">Mark as Converted</button>
+                </div>
+                <div class="lead-item">
+                    <h4>Lead Name 3</h4>
+                    <p>Status: In Progress</p>
+                    <button class="button">View Details</button>
+                    <button class="button">Mark as Converted</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="purchase-leads">
+            <h2>Purchase New Leads</h2>
+            <p>Explore available leads for purchase. Select leads that match your business needs and add them to your pipeline.</p>
+            <div class="lead-options">
+                <!-- Example purchase options, you can dynamically populate this list -->
+                <div class="purchase-item">
+                    <h4>Lead Type A</h4>
+                    <p>Price: $50</p>
+                    <button class="button">Purchase</button>
+                </div>
+                <div class="purchase-item">
+                    <h4>Lead Type B</h4>
+                    <p>Price: $100</p>
+                    <button class="button">Purchase</button>
+                </div>
+                <div class="purchase-item">
+                    <h4>Lead Type C</h4>
+                    <p>Price: $75</p>
+                    <button class="button">Purchase</button>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Get Started</h2>
+            <p>Ready to take control of your leads? <a href="/signup">Sign up</a> now to get started, or <a href="/login">log in</a> if you're already a user.</p>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Lead Manager. All rights reserved.</p>
+        <p>Contact us at <a href="mailto:info@leadmanager.com">info@leadmanager.com</a></p>
+    </footer>
+</body>
+
+</html>
