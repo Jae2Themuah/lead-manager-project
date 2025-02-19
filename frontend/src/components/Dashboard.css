@@ -1,0 +1,112 @@
+/* src/Dashboard.css */
+
+.dashboard-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+  }
+  
+  .dashboard-header h2 {
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+  }
+  
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  .stat-item {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .stat-item h3 {
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .stat-item p {
+    font-size: 32px;
+    font-weight: bold;
+    color: #007bff;
+  }
+  
+  .recent-activity, .tasks {
+    margin-top: 30px;
+  }
+  
+  .recent-activity h3, .tasks h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  ul li {
+    background-color: #fff;
+    margin-bottom: 10px;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  ul li strong {
+    color: #333;
+  }
+  
+  .refresh-container {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  button {
+    padding: 12px 24px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
+  
+  button:focus {
+    outline: none;
+  }
+  
+  button:active {
+    background-color: #222;
+  }
+  
+  /* Navigation Links */
+  .nav-links a {
+    color: black;  /* Set the text color to black */
+    text-decoration: none; /* Remove underline */
+    padding: 8px 12px; /* Add some padding around the links */
+    font-size: 18px; /* Adjust font size */
+    font-weight: bold; /* Make text bold */
+    background-color: transparent;  /* Remove white background */
+  }
+  
+  .nav-links a:hover {
+    color: #007bff; /* Optionally change the color on hover */
+    text-decoration: underline; /* Add underline on hover */
+  }
+  

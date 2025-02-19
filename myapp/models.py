@@ -9,15 +9,16 @@ LEAD_STATUS_CHOICES = [
 ]
 
 class Lead(models.Model):
-    name = models.CharField(max_length=255)
-    contact_info = models.CharField(max_length=255)
-    address = models.TextField()
+    name = models.CharField(max_length=100)
     email = models.EmailField()
+    phone = models.CharField(max_length=20)
+    address = models.CharField(max_length=255)
     status = models.CharField(
-        max_length=100,
+        max_length=50,
         choices=LEAD_STATUS_CHOICES,
         default='new'
     )
+    created_at = models.DateTimeField(auto_now_add=True)
     
     # Add a field for notes
     notes = models.TextField(blank=True, null=True)

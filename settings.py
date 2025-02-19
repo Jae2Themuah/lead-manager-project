@@ -19,8 +19,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',  # If you're using Django REST Framework
-    'your_app_name',   # Replace with your actual app name
+    'myapp',  # Use your actual app name
 ]
+
 
 # Middleware settings
 MIDDLEWARE = [
@@ -34,7 +35,7 @@ MIDDLEWARE = [
 ]
 
 # Root URL configuration
-ROOT_URLCONF = 'your_project_name.urls'  # Replace with your project name
+ROOT_URLCONF = 'leadmanager.urls'  # or 'backend.urls'
 
 # Templates configuration
 TEMPLATES = [
@@ -54,7 +55,7 @@ TEMPLATES = [
 ]
 
 # WSGI application
-WSGI_APPLICATION = 'your_project_name.wsgi.application'  # Replace with your project name
+WSGI_APPLICATION = 'leadmanager.wsgi.application'  # or 'backend.wsgi.application'
 
 # **PostgreSQL Database Configuration**
 DATABASES = {
@@ -62,7 +63,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'lead_manager',  # Your database name
         'USER': 'joshadmin',      # Your PostgreSQL username
-        'PASSWORD': 'your_new_password',  # Your PostgreSQL password
+        'PASSWORD': 'ajani0830',  # Your PostgreSQL password
         'HOST': 'localhost',      # Your database host
         'PORT': '5432',           # Default PostgreSQL port
     }
