@@ -1,7 +1,6 @@
-# myapp/urls.py
 from django.urls import path
-from . import views  # Ensure this imports the views correctly
+from .views import RegisterView
 
 urlpatterns = [
-    path('', views.home, name='home'),  # Ensure you don't have a recursive view
+    path('register/', RegisterView.as_view(), name='register'),
 ]

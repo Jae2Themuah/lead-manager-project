@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+
 
 # Define choices for lead status
 LEAD_STATUS_CHOICES = [
@@ -6,6 +8,15 @@ LEAD_STATUS_CHOICES = [
     ('contacted', 'Contacted'),
     ('qualified', 'Qualified'),
     ('closed', 'Closed'),
+]
+
+# Define choices for phone call dispositions
+PHONE_CALL_DISPOSITION_CHOICES = [
+    ('interested', 'Interested'),
+    ('not_interested', 'Not Interested'),
+    ('follow_up', 'Follow Up'),
+    ('voicemail', 'Voicemail'),
+    ('no_answer', 'No Answer'),
 ]
 
 class Lead(models.Model):
@@ -45,11 +56,12 @@ class PhoneCall(models.Model):
     date = models.DateTimeField()
     duration = models.DurationField(help_text="Duration in minutes")  # You can also use a TimeField or IntegerField
     notes = models.TextField(blank=True, null=True)
-    outcome = models.CharField(max_length=100, choices=[
+    outcome = models.CharField(max_length=100, choices=[ 
         ('successful', 'Successful'),
         ('unsuccessful', 'Unsuccessful'),
         ('follow-up', 'Follow-up Needed')
     ])
+    disposition = models.CharField(max_length=20, choices=PHONE_CALL_DISPOSITION_CHOICES, null=True, blank=True)
     
     def __str__(self):
         return f"Phone Call on {self.date}"

@@ -20,6 +20,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',  # If you're using Django REST Framework
     'myapp',  # Use your actual app name
+    'django.contrib.admin',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount'
+    'rest_framework',
+    'authentication',
+
 ]
 
 
