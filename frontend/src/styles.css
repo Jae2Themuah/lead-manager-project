@@ -1,12 +1,94 @@
+/* Basic Styles for the App */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
 }
 
-h1 {
-    color: #333;
-    text-align: center;
-    padding-top: 20px;
+h1, h3 {
+  color: #333;
+}
+
+.app-container {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.navbar {
+  background-color: #2c3e50;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+
+.navbar-left h1 {
+  margin: 0;
+}
+
+.navbar-right ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+.navbar-right li {
+  margin-left: 20px;
+}
+
+.navbar-right a {
+  color: white;
+  text-decoration: none;
+}
+
+.app-header {
+  background-color: #2c3e50;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+.app-main {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #ecf0f1;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 25%;
+  text-align: center;
+}
+
+.leads-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leads-table th, .leads-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.app-footer {
+  background-color: #2c3e50;
+  color: white;
+  text-align: center;
+  padding: 10px;
 }
