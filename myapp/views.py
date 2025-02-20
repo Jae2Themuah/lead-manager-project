@@ -1,14 +1,17 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from .models import Lead, Appointment, PhoneCall
 from .serializers import LeadSerializer, AppointmentSerializer, PhoneCallSerializer
-from .forms import LeadForm
+from rest_framework.views import APIView
+from rest_framework import status
+# Root route
+def root_route(request):
+    return HttpResponse("Welcome to the Lead Manager API!")
 
 # Register User
 class RegisterView(APIView):
@@ -18,129 +21,87 @@ class RegisterView(APIView):
         username = request.data.get("username")
         password = request.data.get("password")
         email = request.data.get("email")
-        
         if not username or not password or not email:
-            return Response({"error": "All fields are required"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Username, password, and email are required"}, status=400)
+        
+        if User.objects.filter(username=username).exists():
+            return Response({"error": "Username already exists"}, status=400)
+        
+        if User.objects.filter(email=email).exists():
+            return Response({"error": "Email already exists"}, status=400)
         
         user = User.objects.create_user(username=username, password=password, email=email)
-        return Response({"message": "User created successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "User created successfully"}, status=201)
 
 # Login User
-class LoginUser(APIView):
+class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
         username = request.data.get("username")
         password = request.data.get("password")
+        if not username or not password:
+            return Response({"error": "Username and password are required"}, status=400)
         
         user = authenticate(username=username, password=password)
         if user:
-            return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
-        else:
-            return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Login successful"}, status=200)
+        return Response({"error": "Invalid credentials"}, status=401)
 
-# Lead Creation Form View
-def add_lead(request):
-    if request.method == 'POST':
-        form = LeadForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/success/')  # Redirect to a success page (you can modify the URL)
-    else:
-        form = LeadForm()
-    
-    return render(request, 'add_lead.html', {'form': form})
+# Lead Views
+class LeadListCreate(APIView):
+    permission_classes = [AllowAny]
 
-# Lead Creation API View
-class CreateLead(APIView):
-    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        leads = Lead.objects.all()
+        serializer = LeadSerializer(leads, many=True)
+        return Response(serializer.data)
 
     def post(self, request):
         serializer = LeadSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
-# Lead Edit
-class EditLead(APIView):
-    permission_classes = [IsAuthenticated]
+# Lead Detail View (Fixing the error)
+class LeadDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Lead.objects.all()
+    serializer_class = LeadSerializer
+    permission_classes = [AllowAny]
 
-    def put(self, request, pk):
-        try:
-            lead = Lead.objects.get(pk=pk)
-        except Lead.DoesNotExist:
-            return Response({"error": "Lead not found"}, status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = LeadSerializer(lead, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# Appointment Views
+class AppointmentListCreate(APIView):
+    permission_classes = [AllowAny]
 
-# Lead Details
-class LeadDetail(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, pk):
-        try:
-            lead = Lead.objects.get(pk=pk)
-        except Lead.DoesNotExist:
-            return Response({"error": "Lead not found"}, status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = LeadSerializer(lead)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-# Appointment Creation API View
-class CreateAppointment(APIView):
-    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        appointments = Appointment.objects.all()
+        serializer = AppointmentSerializer(appointments, many=True)
+        return Response(serializer.data)
 
     def post(self, request):
         serializer = AppointmentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
-# Appointment Edit API View
-class EditAppointment(APIView):
-    permission_classes = [IsAuthenticated]
+# Phone Call Views
+class PhoneCallListCreate(APIView):
+    permission_classes = [AllowAny]
 
-    def put(self, request, pk):
-        try:
-            appointment = Appointment.objects.get(pk=pk)
-        except Appointment.DoesNotExist:
-            return Response({"error": "Appointment not found"}, status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = AppointmentSerializer(appointment, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# Phone Call Creation API View
-class CreatePhoneCall(APIView):
-    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        phone_calls = PhoneCall.objects.all()
+        serializer = PhoneCallSerializer(phone_calls, many=True)
+        return Response(serializer.data)
 
     def post(self, request):
         serializer = PhoneCallSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
-# Phone Call Edit API View
-class EditPhoneCall(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def put(self, request, pk):
-        try:
-            phone_call = PhoneCall.objects.get(pk=pk)
-        except PhoneCall.DoesNotExist:
-            return Response({"error": "Phone call not found"}, status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = PhoneCallSerializer(phone_call, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class HelloWorld(APIView):
+    def get(self, request):
+        return Response({"message": "Hello, world!"}, status=status.HTTP_200_OK)

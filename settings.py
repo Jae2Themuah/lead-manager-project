@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'your-secret-key-here'  # Replace with your actual secret key
 DEBUG = True  # Set to False in production
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Installed applications
 INSTALLED_APPS = [
@@ -20,15 +20,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',  # If you're using Django REST Framework
     'myapp',  # Use your actual app name
-    'django.contrib.admin',
     'allauth',
     'allauth.account',
-    'allauth.socialaccount'
-    'rest_framework',
+    'allauth.socialaccount',
     'authentication',
-
 ]
-
 
 # Middleware settings
 MIDDLEWARE = [
@@ -48,7 +44,7 @@ ROOT_URLCONF = 'leadmanager.urls'  # or 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'templates', BASE_DIR / 'venv/lib/site-packages/rest_framework/templates'],  # Added DRF template path
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -104,3 +100,11 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Django REST Framework settings (enable browsable API renderer)
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework.renderers.JSONRenderer',
+    ],
+}

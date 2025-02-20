@@ -10,4 +10,5 @@ urlpatterns = [
     path('auth/', include('authentication.urls')),
     path('add/', views.add_lead, name='add_lead'),
     path('edit/<int:pk>/', views.edit_lead, name='edit_lead'),
+    path('', include('myapp.urls')),
 ]
