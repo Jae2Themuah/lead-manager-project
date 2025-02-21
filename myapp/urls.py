@@ -2,7 +2,8 @@ from django.urls import path
 from .views import (
     HelloWorld, root_route, RegisterView, LoginView,
     LeadListCreate, LeadDetailView,
-    AppointmentListCreate, PhoneCallListCreate
+    AppointmentListCreate, AppointmentDetailView,  # Added missing AppointmentDetailView
+    PhoneCallListCreate, PhoneCallDetailView,  # Added missing PhoneCallDetailView
 )
 
 urlpatterns = [
@@ -17,7 +18,9 @@ urlpatterns = [
 
     # Appointment Endpoints
     path("appointments/", AppointmentListCreate.as_view(), name="appointment-list"),
+    path("appointments/<int:pk>/", AppointmentDetailView.as_view(), name="appointment-detail"),
 
     # Phone Call Endpoints
     path("phone-calls/", PhoneCallListCreate.as_view(), name="phone-call-list"),
+    path("phone-calls/<int:pk>/", PhoneCallDetailView.as_view(), name="phone-call-detail"),
 ]

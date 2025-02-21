@@ -4,11 +4,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from .models import Lead, Appointment, PhoneCall
 from .serializers import LeadSerializer, AppointmentSerializer, PhoneCallSerializer
-from rest_framework.views import APIView
 from rest_framework import status
+
 # Root route
 def root_route(request):
     return HttpResponse("Welcome to the Lead Manager API!")
@@ -105,3 +106,14 @@ class PhoneCallListCreate(APIView):
 class HelloWorld(APIView):
     def get(self, request):
         return Response({"message": "Hello, world!"}, status=status.HTTP_200_OK)
+# Appointment Detail View
+class AppointmentDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentSerializer
+    permission_classes = [AllowAny]
+
+# Phone Call Detail View
+class PhoneCallDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = PhoneCall.objects.all()
+    serializer_class = PhoneCallSerializer
+    permission_classes = [AllowAny]

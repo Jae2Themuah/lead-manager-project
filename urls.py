@@ -1,8 +1,9 @@
 from django.contrib import admin
-from django.urls import path
-from myapp.views import RegisterView  # Import the view from your app
+from django.urls import path, include
+from .views import protected_endpoint
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("register/", RegisterView.as_view(), name="register"),
+    path("auth/", include("authentication.urls")),  # Include authentication URLs
+    path('protected-endpoint/', protected_endpoint, name='protected-endpoint'),
 ]
