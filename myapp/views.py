@@ -1,119 +1,164 @@
-from django.http import HttpResponse
+from django.http import JsonResponse
+from django.contrib.auth import authenticate, get_user_model
+from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
+from rest_framework import status, generics
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.renderers import JSONRenderer
+from rest_framework.decorators import api_view, permission_classes, renderer_classes
 
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from .models import Lead, Appointment, PhoneCall
 from .serializers import LeadSerializer, AppointmentSerializer, PhoneCallSerializer
-from rest_framework import status
 
-# Root route
+User = get_user_model()
+
+def get_tokens_for_user(user):
+    """Generate JWT tokens for authentication."""
+    refresh = RefreshToken.for_user(user)
+    return {
+        "refresh": str(refresh),
+        "access": str(refresh.access_token),
+    }
+
+@login_required
+def protected_endpoint(request):
+    """Django login-required endpoint."""
+    return JsonResponse({"message": "This is a protected endpoint"})
+
+class JSONAPIView(APIView):
+    """Base class with JSON renderer for API responses."""
+    renderer_classes = [JSONRenderer]
+
 def root_route(request):
-    return HttpResponse("Welcome to the Lead Manager API!")
+    """Root route for API welcome message."""
+    return JsonResponse({"message": "Welcome to the Lead Manager API!"})
 
-# Register User
-class RegisterView(APIView):
+class RegisterView(JSONAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        """User registration endpoint."""
         username = request.data.get("username")
         password = request.data.get("password")
         email = request.data.get("email")
-        if not username or not password or not email:
-            return Response({"error": "Username, password, and email are required"}, status=400)
-        
-        if User.objects.filter(username=username).exists():
-            return Response({"error": "Username already exists"}, status=400)
-        
-        if User.objects.filter(email=email).exists():
-            return Response({"error": "Email already exists"}, status=400)
-        
-        user = User.objects.create_user(username=username, password=password, email=email)
-        return Response({"message": "User created successfully"}, status=201)
 
-# Login User
-class LoginView(APIView):
+        if not all([username, password, email]):
+            return Response({"error": "All fields are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if User.objects.filter(username=username).exists():
+            return Response({"error": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if User.objects.filter(email=email).exists():
+            return Response({"error": "Email already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.create_user(username=username, password=password, email=email)
+        tokens = get_tokens_for_user(user)
+
+        return Response({"message": "User created successfully", "tokens": tokens}, status=status.HTTP_201_CREATED)
+
+class LoginView(JSONAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        """User login endpoint."""
         username = request.data.get("username")
         password = request.data.get("password")
-        if not username or not password:
-            return Response({"error": "Username and password are required"}, status=400)
-        
-        user = authenticate(username=username, password=password)
-        if user:
-            return Response({"message": "Login successful"}, status=200)
-        return Response({"error": "Invalid credentials"}, status=401)
 
-# Lead Views
-class LeadListCreate(APIView):
-    permission_classes = [AllowAny]
+        if not username or not password:
+            return Response({"error": "Username and password are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = authenticate(username=username, password=password)
+
+        if user:
+            tokens = get_tokens_for_user(user)
+            return Response({"message": "Login successful", "tokens": tokens}, status=status.HTTP_200_OK)
+
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+class ProtectedView(JSONAPIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        leads = Lead.objects.all()
-        serializer = LeadSerializer(leads, many=True)
-        return Response(serializer.data)
+        """Protected route example."""
+        return Response({"message": "You have accessed a protected route!"}, status=status.HTTP_200_OK)
 
-    def post(self, request):
-        serializer = LeadSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
-
-# Lead Detail View (Fixing the error)
-class LeadDetailView(RetrieveUpdateDestroyAPIView):
+class LeadListCreate(ListCreateAPIView):
     queryset = Lead.objects.all()
     serializer_class = LeadSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    renderer_classes = [JSONRenderer]
 
-# Appointment Views
-class AppointmentListCreate(APIView):
-    permission_classes = [AllowAny]
+class LeadDetailView(JSONAPIView):
+    permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        appointments = Appointment.objects.all()
-        serializer = AppointmentSerializer(appointments, many=True)
-        return Response(serializer.data)
+    def get(self, request, pk):
+        """Retrieve a single lead."""
+        lead = get_object_or_404(Lead, pk=pk)
+        serializer = LeadSerializer(lead)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
-        serializer = AppointmentSerializer(data=request.data)
+    def put(self, request, pk):
+        """Update a lead."""
+        lead = get_object_or_404(Lead, pk=pk)
+        serializer = LeadSerializer(lead, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# Phone Call Views
-class PhoneCallListCreate(APIView):
-    permission_classes = [AllowAny]
+    def delete(self, request, pk):
+        """Delete a lead."""
+        lead = get_object_or_404(Lead, pk=pk)
+        lead.delete()
+        return Response({"message": "Lead deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
-    def get(self, request):
-        phone_calls = PhoneCall.objects.all()
-        serializer = PhoneCallSerializer(phone_calls, many=True)
-        return Response(serializer.data)
+class AppointmentListCreate(ListCreateAPIView):
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentSerializer
+    permission_classes = [IsAuthenticated]
+    renderer_classes = [JSONRenderer]
 
-    def post(self, request):
-        serializer = PhoneCallSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
-
-class HelloWorld(APIView):
-    def get(self, request):
-        return Response({"message": "Hello, world!"}, status=status.HTTP_200_OK)
-# Appointment Detail View
 class AppointmentDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    renderer_classes = [JSONRenderer]
 
-# Phone Call Detail View
+class PhoneCallListCreate(ListCreateAPIView):
+    queryset = PhoneCall.objects.all()
+    serializer_class = PhoneCallSerializer
+    permission_classes = [IsAuthenticated]
+    renderer_classes = [JSONRenderer]
+
 class PhoneCallDetailView(RetrieveUpdateDestroyAPIView):
     queryset = PhoneCall.objects.all()
     serializer_class = PhoneCallSerializer
+    permission_classes = [IsAuthenticated]
+    renderer_classes = [JSONRenderer]
+
+@api_view(['GET'])
+@renderer_classes([JSONRenderer])
+def test_api(request):
+    """Test API endpoint."""
+    return Response({"message": "API is working!"})
+
+class HelloWorld(JSONAPIView):
     permission_classes = [AllowAny]
+
+    def get(self, request):
+        """Simple Hello World endpoint."""
+        return Response({"message": "Hello, world!"}, status=status.HTTP_200_OK)
+
+class DebugHeadersView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """Returns request headers for debugging purposes."""
+        return JsonResponse({"headers": dict(request.headers)})
