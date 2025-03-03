@@ -1,0 +1,40 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+  <h1>Lead List</h1>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone Number</th>
+        <th>Address</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for lead in leads %}
+        <tr>
+          <td>{{ lead.name }}</td>
+          <td>{{ lead.email }}</td>
+          <td>{{ lead.phone_number }}</td>
+          <td>{{ lead.address }}</td>
+          <td>{{ lead.status }}</td>
+          <td>
+            <a href="{% url 'lead_detail' lead.id %}" class="btn btn-primary btn-sm">View</a>
+            <a href="{% url 'lead_edit' lead.id %}" class="btn btn-warning btn-sm">Edit</a>
+            <a href="{% url 'lead_delete' lead.id %}" class="btn btn-danger btn-sm">Delete</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="6">No leads found.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="{% url 'lead_create' %}" class="btn btn-success">Add New Lead</a>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+  <h1>{% if phone_call %}Edit Phone Call{% else %}Create New Phone Call{% endif %}</h1>
+
+  <form method="POST">
+    {% csrf_token %}
+    
+    <div class="form-group">
+      <label for="id_lead">Lead</label>
+      <select class="form-control" id="id_lead" name="lead" required>
+        <option value="" disabled {% if not phone_call %}selected{% endif %}>-- Select a Lead --</option>
+        {% for lead in leads %}
+          <option value="{{ lead.id }}" {% if phone_call and phone_call.lead.id == lead.id %}selected{% endif %}>
+            {{ lead.name }} - {{ lead.email }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="id_phone_number">Phone Number</label>
+      <input type="text" class="form-control" id="id_phone_number" name="phone_number" value="{{ phone_call.phone_number if phone_call else '' }}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="id_call_date">Call Date</label>
+      <input type="date" class="form-control" id="id_call_date" name="call_date" value="{{ phone_call.call_date if phone_call else '' }}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="id_notes">Notes</label>
+      <textarea class="form-control" id="id_notes" name="notes" required>{{ phone_call.notes if phone_call else '' }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="id_follow_up_date">Follow-up Date</label>
+      <input type="date" class="form-control" id="id_follow_up_date" name="follow_up_date" value="{{ phone_call.follow_up_date if phone_call else '' }}">
+    </div>
+
+    <div class="form-group">
+      <label for="id_status">Call Status</label>
+      <select class="form-control" id="id_status" name="status" required>
+        <option value="Completed" {% if phone_call and phone_call.status == 'Completed' %}selected{% endif %}>Completed</option>
+        <option value="Pending" {% if phone_call and phone_call.status == 'Pending' %}selected{% endif %}>Pending</option>
+        <option value="Failed" {% if phone_call and phone_call.status == 'Failed' %}selected{% endif %}>Failed</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      {% if phone_call %}Save Changes{% else %}Create Phone Call{% endif %}
+    </button>
+  </form>
+
+  <a href="{% url 'phone_call_list' %}" class="btn btn-secondary mt-3">Back to Phone Call List</a>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+  <h1>{% if lead %}Edit Lead{% else %}Create New Lead{% endif %}</h1>
+
+  <form method="POST">
+    {% csrf_token %}
+    
+    <div class="form-group">
+      <label for="id_name">Name</label>
+      <input type="text" class="form-control" id="id_name" name="name" value="{{ lead.name if lead else '' }}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="id_email">Email</label>
+      <input type="email" class="form-control" id="id_email" name="email" value="{{ lead.email if lead else '' }}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="id_phone_number">Phone Number</label>
+      <input type="text" class="form-control" id="id_phone_number" name="phone_number" value="{{ lead.phone_number if lead else '' }}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="id_address">Address</label>
+      <textarea class="form-control" id="id_address" name="address" required>{{ lead.address if lead else '' }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="id_status">Status</label>
+      <select class="form-control" id="id_status" name="status" required>
+        <option value="New" {% if lead and lead.status == 'New' %}selected{% endif %}>New</option>
+        <option value="Contacted" {% if lead and lead.status == 'Contacted' %}selected{% endif %}>Contacted</option>
+        <option value="Converted" {% if lead and lead.status == 'Converted' %}selected{% endif %}>Converted</option>
+        <option value="Closed" {% if lead and lead.status == 'Closed' %}selected{% endif %}>Closed</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      {% if lead %}Save Changes{% else %}Create Lead{% endif %}
+    </button>
+  </form>
+
+  <a href="{% url 'lead_list' %}" class="btn btn-secondary mt-3">Back to Lead List</a>
+{% endblock %}

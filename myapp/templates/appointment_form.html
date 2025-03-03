@@ -1,0 +1,46 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+  <h1>{% if appointment %}Edit Appointment{% else %}Create New Appointment{% endif %}</h1>
+
+  <form method="POST">
+    {% csrf_token %}
+    
+    <div class="form-group">
+      <label for="id_lead">Lead</label>
+      <select class="form-control" id="id_lead" name="lead" required>
+        <option value="" disabled {% if not appointment %}selected{% endif %}>-- Select a Lead --</option>
+        {% for lead in leads %}
+          <option value="{{ lead.id }}" {% if appointment and appointment.lead.id == lead.id %}selected{% endif %}>
+            {{ lead.name }} - {{ lead.email }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="id_appointment_date">Appointment Date</label>
+      <input type="datetime-local" class="form-control" id="id_appointment_date" name="appointment_date" value="{{ appointment.appointment_date if appointment else '' }}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="id_notes">Notes</label>
+      <textarea class="form-control" id="id_notes" name="notes" required>{{ appointment.notes if appointment else '' }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="id_status">Appointment Status</label>
+      <select class="form-control" id="id_status" name="status" required>
+        <option value="Scheduled" {% if appointment and appointment.status == 'Scheduled' %}selected{% endif %}>Scheduled</option>
+        <option value="Completed" {% if appointment and appointment.status == 'Completed' %}selected{% endif %}>Completed</option>
+        <option value="Canceled" {% if appointment and appointment.status == 'Canceled' %}selected{% endif %}>Canceled</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      {% if appointment %}Save Changes{% else %}Create Appointment{% endif %}
+    </button>
+  </form>
+
+  <a href="{% url 'appointment_list' %}" class="btn btn-secondary mt-3">Back to Appointment List</a>
+{% endblock %}
